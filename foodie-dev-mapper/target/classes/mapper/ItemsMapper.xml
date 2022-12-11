@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soft.mapper.ItemsMapper">
+
+    <resultMap id="itemInfoMap" type="com.soft.pojo.VO.ItemInfoVO">
+        <id column="id" property="id"/>
+        <result column="item_name" property="itemName"/>
+        <result column="sell_counts" property="sellCounts"/>
+        <result column="content" property="content"/>
+
+        <association property="itemsParam" javaType="com.soft.pojo.ItemsParam">
+            <result column="produc_place" property="producPlace"/>
+            <result column="foot_period" property="footPeriod"/>
+            <result column="brand" property="brand"/>
+            <result column="factory_name" property="factoryName"/>
+            <result column="factory_address" property="factoryAddress"/>
+            <result column="packaging_method" property="packagingMethod"/>
+            <result column="weight" property="weight"/>
+            <result column="storage_method" property="storageMethod"/>
+            <result column="eat_method" property="eatMethod"/>
+        </association>
+        <collection property="itemsImgList" ofType="com.soft.pojo.ItemsImg">
+            <result column="url" property="url"/>
+            <result column="is_main" property="isMain"/>
+        </collection>
+        <collection property="itemsSpecList" ofType="com.soft.pojo.ItemsSpec">
+            <result column="spec_id" property="id"/>
+            <result column="name" property="name"/>
+            <result column="stock" property="stock"/>
+            <result column="discounts" property="discounts"/>
+            <result column="price_discount" property="priceDiscount"/>
+            <result column="price_normal" property="priceNormal"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="itemMap" type="com.soft.pojo.VO.ItemVO">
+        <result column="id" property="id"/>
+        <result column="item_name" property="itemName"/>
+        <result column="itemImgUrl" property="itemImgUrl"/>
+        <result column="sell_counts" property="sellCounts"/>
+        <collection property="itemsSpecList" ofType="com.soft.pojo.ItemsSpec">
+            <result column="spec_name" property="name"/>
+            <result column="price_discount" property="priceDiscount"/>
+        </collection>
+    </resultMap>
+
+    <select id="getItemInfo" parameterType="String" resultMap="itemInfoMap">
+        SELECT
+            t1.id,
+            t1.item_name,
+            t1.sell_counts,
+            t1.content,
+            t2.produc_place,
+            t2.foot_period,
+            t2.brand,
+            t2.factory_name,
+            t2.factory_address,
+            t2.packaging_method,
+            t2.weight,
+            t2.storage_method,
+            t2.eat_method,
+            t3.url,
+            t3.is_main,
+            t4.id as spec_id,
+            t4.NAME,
+            t4.stock,
+            t4.discounts,
+            t4.price_discount,
+            t4.price_normal
+        FROM
+            items t1
+                LEFT JOIN items_param t2 ON t1.id = t2.item_id
+                LEFT JOIN items_img t3 ON t1.id = t3.item_id
+                LEFT JOIN items_spec t4 ON t1.id = t4.item_id
+        where t1.id = #{id}
+    </select>
+
+    <select id="getCommentLevelNum" parameterType="String" resultType="com.soft.pojo.VO.ItemCommentVO">
+        select sum(a.good_comment_num) as goodCommentNum,
+               sum(a.mid_comment_num)  as midCommentNum,
+               sum(a.bad_comment_num)  as badCommentNum,
+               sum(good_comment_num + mid_comment_num + bad_comment_num) commentTotal
+        from (
+                 select case when comment_level = 1 then IFNULL(count(1), 0) else 0 END good_comment_num,
+                        case when comment_level = 2 then IFNULL(count(1), 0) else 0 END mid_comment_num,
+                        case when comment_level = 3 then IFNULL(count(1), 0) else 0 END bad_comment_num
+                 from items_comments where item_id = #{id}
+                 group by comment_level) a
+
+    </select>
+   <!-- select
+    sum(a.good_comment_num) as good_comment_num,
+    sum(a.mid_comment_num) as mid_comment_num,
+    sum(a.bad_comment_num) as bad_comment_num
+    from (
+    select
+    case when comment_level = 1 then 1 else 0	 END good_comment_num,
+    case when comment_level = 2 then 1 else 0  END mid_comment_num,
+    case when comment_level = 3 then 1 else 0  END bad_comment_num
+    from items_comments) a-->
+
+    <select id="search" parameterType="com.soft.pojo.VO.KeywordVO" resultMap="itemMap">
+        select t2.id, t2.item_name, t3.name as spec_name, t3.price_discount, t2.sell_counts, t4.url as itemImgUrl
+        from items t2
+                 left join items_spec t3 on t2.id = t3.item_id
+                 left join items_img t4 on t2.id = t4.item_id
+        where t2.item_name like concat('%', #{keywordVO.searchKeyword}, '%') and t4.is_main = 1
+        order by
+        <choose>
+            <when test="keywordVO.sort == &quot;c&quot;">
+                sell_counts desc
+            </when>
+            <when test="keywordVO.sort == &quot;p&quot;">
+                price_discount asc
+            </when>
+            <otherwise>
+                item_name asc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="searchCategory" parameterType="com.soft.pojo.VO.KeywordVO" resultMap="itemMap">
+        select t2.id, t2.item_name, t3.name as spec_name, t3.price_discount, t2.sell_counts, t4.url as itemImgUrl
+        from items t2
+                 left join items_spec t3 on t2.id = t3.item_id
+                 left join items_img t4 on t2.id = t4.item_id
+        where t2.cat_id = #{keywordVO.catId} and t4.is_main = 1
+        order by
+        <choose>
+            <when test="keywordVO.sort == &quot;c&quot;">
+                sell_counts desc
+            </when>
+            <when test="keywordVO.sort == &quot;p&quot;">
+                price_discount asc3 
+
+            </when>
+            <otherwise>
+                item_name asc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getShopCatList" parameterType="list" resultType="com.soft.pojo.VO.ShopCatVO">
+        SELECT
+        t1.id AS itemId,
+        t2.url AS itemImgUrl,
+        t1.item_name AS itemName,
+        t3.id AS specId,
+        t3.`name` AS specName,
+        t3.price_discount AS priceDiscount,
+        t3.price_normal AS priceNormal
+        FROM
+        items_spec t3
+        LEFT JOIN items t1 ON t1.id = t3.item_id
+        LEFT JOIN (select item_id, url from items_img where is_main = '1') t2 ON t1.id = t2.item_id
+        where t3.id in
+        <foreach collection="asList" item="specId" index="index" separator="," open="(" close=")">
+            #{specId}
+        </foreach>
+    </select>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soft.mapper.ItemsCommentsMapper">
+
+    <select id="getItemComment" parameterType="com.soft.pojo.ItemsComments" resultType="com.soft.pojo.VO.ItemCommentVO">
+        SELECT
+        t2.id AS user_id,
+        t2.username,
+        t2.nickname,
+        t2.face,
+        t3.item_name,
+        t1.sepc_name,
+        t1.content,
+        t1.updated_time
+        FROM
+        `items_comments` t1
+        LEFT JOIN users t2 ON t1.user_id = t2.id
+        LEFT JOIN items t3 ON t1.item_id = t3.id
+        <where>
+            <if test="param.itemId != null and param.itemId != ''">
+                t3.id = #{param.itemId}
+            </if>
+            <if test="param.commentLevel != null and param.commentLevel != ''">
+                t1.commentLevel = #{param.commentLevel}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,46 @@
+#配置数据源信息
+spring:
+  profiles:
+    active: dev
+  datasource:
+    hikari:
+      connection-timeout: 30000   #等待连接的最大时长
+      minimum-idle: 5   #最小连接数
+      maximum-pool-size: 20
+      auto-commit: true   #自动提交
+      pool-name: DataSourceHikariCP   #连接池名字
+      max-lifetime: 1800000   #连接的生命时长，超时没有被使用就会被释放，默认：30分钟
+  servlet:  #管理所存储Object的存储空间名称
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 10MB
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/**/*Mapper.xml
+  global-config:
+    # 逻辑删除配置
+    db-config:
+      # 删除前
+      logic-not-delete-value: 1
+      # 删除后
+      logic-delete-value: 0
+
+# 支付宝支付
+aliPay:
+  serverUrl: https://openapi.alipaydev.com/gateway.do
+  appId: 2021000118685106
+  privateKey: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCLjgUjP+TGHZ9i+fFRf7VnIKUA/57z0uvv6mcH8sYTJHohIozvK3TAeepz7crcgr0TefFYXu/etAFJNklHUOoDSLvl2KqHs48bUNrK0VCqyxx5qmhd7adI8crVuUqPUfT2LKolpILECcndo0f1lZfIK0t2hkDRu+pg5VePb7XdKhKXxmROPgMIOOYLhCJ/gMBb/ipgW2m2o9tetBfonwUZvidbRrh5OWbBTepC2AIEFvOUuiq9VKSw+9rrARLVth2sL5pkxjzjNfKPkECcyLYgCf7xOzGG1BXkFd2WwONbxmPSueidrX7HQ8qJeCRfNuJNZgece0RKHUIcjwufSvwnAgMBAAECggEAASOkqRgBbxiYz38I2Eh5m6Dpl+t+SbFEGc5JDwiNU2St1o1opx8ssdGM92tOh6RNlNYfAUCtJp1DkWxvBrUDZAl49zRgmAEAPxHW52b0CKDl15xrg7DH99F5fWsoz6i0njnZHbuNEbqeuj91++w/s/OehxYre0rUa/wTTel0i5ykJ8fWaCt7/8HryolMiqZhRN7+QtZm4q58az+6e3H5JOXc5/5opXd+PwPjMS2mjrM3gJ4ZOYv01Ofcx+oiGzSOz5DV9tPeYlMi6V4LTOLqfWvAllOMZjooW62QJklQNetMzko54S5eEpNX+/j/IM2aQ4+GvwrIp36Smhi6sd31YQKBgQDqeJRHUOw8tMwUM1EvO/oMWbSalONhhoVbCVvHYg37ZUNfb6inDJ218s+EtLEO6CtxTHDSYr5QdAScB+/ma3+AREYE6TDnF2FJVQN8F/bxA3O1V1HPvTd920R5ad+0Kh5WUUKtFPvBQ9HfPi0w35Frm0Q361+cpvroJqSgbz0scQKBgQCYXlycRKssnDIt+iE1UmW5oYEBSAqWQ49hW365PC4vFwxXD9VErw22TjDHngSfrnNOruCgxx8AFlpyMZU7FihAhFA1duDWa+F3s6H7GgJlumCw66vJQH4rA5eTJAuIkCfx8tsorWvB2OXtiQdvDHSfxOTk89hUuQlsTVLVIWLeFwKBgQDJFYItK1R+t5tyE5Sjiq9mmiROkjPzdte1fHAurYRKPs0p8uvT3/j9ivC34fMbUre3IhR8Cd0nyGgPnKr8lOKzEVpvacHb3mw75OHpMfBBQHGiavGp1J/bmwm9irQkoh6EbopdP+qtE8nQyFUfXg0sGOvHfV/xTC9Qm5uCUARJsQKBgHu2wkMvjjyeZi/mk+gTivz6ISDFObNgD57hBzenoWgisqZN+L/X0q5fNkQeDWsJ3h3Y6BIjGwybGbz2fVCIYQ5hYC7I4y22Uk86zx5us9udRLzh3Y1+i/Ko6/1Qmvy673QH1+JjTMcMMUR4qkyENH01BRTQ2KmRxBDnh4X9oaTpAoGAci/crGGIHWMXOkRqAY9jX3eC4/cU/S8zKdOGQIjyOOpJlM15anEfQ+gefoJ6Jy2oprt9OOONiwybh+OYgBNQjWDCdhrTKzXcbok0MveMV2X4bZbwwcGQ/jabdw8ZQL5hSnaOald6B1mCFfF/NPMWugekIKPCxt8go7bPTKXvzyU=
+  appCertPath: alipay/appCertPublicKey_2021000118685106.crt
+  aliPayCertPath: alipay/alipayCertPublicKey_RSA2.crt
+  aliPayRootCertPath: alipay/alipayRootCert.crt
+  notifyUrl: https://ronghe.xingwanban.com/cnsaep/pay/notify
+
+#支付宝oss
+aliyun:
+  endpoint: https://oss-cn-beijing.aliyuncs.com
+  accessKeyId: LTAI5t5bpWMwGyvJaYfARKnZ
+  accessKeySecret: HyfIGIGxFMjFLXAFprPdZoWPsMFQVW
+  bucketName: foodie-bucket-beijing

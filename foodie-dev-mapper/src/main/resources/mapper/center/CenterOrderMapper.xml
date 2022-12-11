@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soft.mapper.center.CenterOrderMapper">
+
+    <resultMap id="centerOrderMap" type="com.soft.pojo.VO.CenterOrderRespVO">
+        <result column="id" property="id"/>
+        <result column="real_pay_amount" property="realPayAmount"/>
+        <result column="pay_method" property="payMethod"/>
+        <result column="post_amount" property="postAmount"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="deliver_time" property="deliverTime"/>
+        <result column="success_time" property="successTime"/>
+        <result column="close_time" property="closeTime"/>
+        <collection property="orderItemsList" ofType="com.soft.pojo.OrderItems">
+            <result property="itemId" column="item_id"/>
+            <result property="itemImg" column="item_img"/>
+            <result property="itemName" column="item_name"/>
+            <result property="itemSpecName" column="item_spec_name"/>
+            <result property="price" column="price"/>
+            <result property="buyCounts" column="buy_counts"/>
+        </collection>
+    </resultMap>
+
+    <select id="findCenterOrder" parameterType="com.soft.pojo.VO.CenterOrderVO"
+            resultMap="centerOrderMap">
+        select
+            t1.id, t1.real_pay_amount, t1.pay_method, t1.post_amount,
+            t2.item_id, t2.item_img, t2.item_name, t2.item_spec_name, t2.price, t2.buy_counts,
+            t3.order_status, t3.created_time, t3.pay_time, t3.deliver_time, t3.success_time, t3.close_time
+        from orders t1
+                 left join order_items t2 on t1.id = t2.order_id
+                 left join order_status t3 on t1.id = t3.order_id
+        <where>
+            <if test="centerOrderVO.userId != null and centerOrderVO.userId != ''">
+                t1.user_id = #{centerOrderVO.userId}
+            </if>
+            <if test="centerOrderVO.orderStatus != null and centerOrderVO.orderStatus != ''">
+                and t3.order_status = #{centerOrderVO.orderStatus}
+            </if>
+        </where>
+    </select>
+
+</mapper>

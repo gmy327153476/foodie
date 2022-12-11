@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soft.mapper.ItemsSpecMapper">
+
+
+   <select id="getItemInfoBySpecId" parameterType="string" resultType="com.soft.pojo.VO.ItemVO">
+        select t2.id, t2.item_name as itemName, t3.url as itemImgUrl from items_spec t1
+        left join items t2 on t1.item_id = t2.id
+        left join items_img t3 on t2.id = t3.item_id
+        <where>
+            <if test="specId != null and specId != ''">
+                and t1.id = #{specId}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

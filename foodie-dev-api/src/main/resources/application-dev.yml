@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource    #数据源类型
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/foodie_shop_dev?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: root
+
+server:
+  port: 9090
